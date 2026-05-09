@@ -1,0 +1,3632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RRB ALP — Ravi Kumar Progress Tracker</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0e1a;
+        --surface: #111827;
+        --card: #1a2235;
+        --border: #243050;
+        --accent: #f97316;
+        --accent2: #3b82f6;
+        --accent3: #10b981;
+        --warn: #f59e0b;
+        --danger: #ef4444;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --glow: rgba(249, 115, 22, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          135deg,
+          #0f1724 0%,
+          #1a2544 50%,
+          #0f1724 100%
+        );
+        border-bottom: 1px solid var(--border);
+        padding: 24px 32px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px);
+      }
+      .header-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .logo-icon {
+        width: 46px;
+        height: 46px;
+        background: linear-gradient(135deg, var(--accent), #fb923c);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: 0 0 20px var(--glow);
+      }
+      .logo-text h1 {
+        font-family: "Syne", sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #fff;
+      }
+      .logo-text p {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: "DM Mono", monospace;
+      }
+      .header-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .hstat {
+        text-align: center;
+      }
+      .hstat-val {
+        font-family: "Syne", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .hstat-label {
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* Nav Tabs */
+      .nav {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 32px;
+        overflow-x: auto;
+      }
+      .nav-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        gap: 4px;
+      }
+      .tab {
+        padding: 14px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        transition: all 0.2s;
+        background: none;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        font-family: "DM Sans", sans-serif;
+      }
+      .tab:hover {
+        color: var(--text);
+      }
+      .tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      /* Main */
+      .main {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 28px 32px;
+      }
+
+      /* Page sections */
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+      }
+      .card-title {
+        font-family: "Syne", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Grid layouts */
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 20px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+      }
+
+      /* Stat Cards */
+      .stat-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+      }
+      .stat-card.orange::before {
+        background: linear-gradient(90deg, var(--accent), #fb923c);
+      }
+      .stat-card.blue::before {
+        background: linear-gradient(90deg, var(--accent2), #60a5fa);
+      }
+      .stat-card.green::before {
+        background: linear-gradient(90deg, var(--accent3), #34d399);
+      }
+      .stat-card.red::before {
+        background: linear-gradient(90deg, var(--danger), #f87171);
+      }
+      .stat-card.yellow::before {
+        background: linear-gradient(90deg, var(--warn), #fcd34d);
+      }
+      .stat-val {
+        font-family: "Syne", sans-serif;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .stat-card.orange .stat-val {
+        color: var(--accent);
+      }
+      .stat-card.blue .stat-val {
+        color: var(--accent2);
+      }
+      .stat-card.green .stat-val {
+        color: var(--accent3);
+      }
+      .stat-card.red .stat-val {
+        color: var(--danger);
+      }
+      .stat-card.yellow .stat-val {
+        color: var(--warn);
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      /* Progress bar */
+      .progress-wrap {
+        margin-top: 10px;
+      }
+      .progress-bar {
+        height: 6px;
+        background: var(--border);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 99px;
+        transition: width 0.5s ease;
+      }
+      .progress-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 5px;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* Subject accuracy bars */
+      .subject-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .subject-name {
+        font-size: 13px;
+        font-weight: 500;
+        min-width: 150px;
+      }
+      .subject-bar-wrap {
+        flex: 1;
+      }
+      .subject-bar {
+        height: 10px;
+        background: var(--border);
+        border-radius: 99px;
+        overflow: hidden;
+        position: relative;
+      }
+      .subject-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        position: relative;
+      }
+      .subject-pct {
+        font-size: 13px;
+        font-weight: 600;
+        min-width: 40px;
+        text-align: right;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* Topic tracker */
+      .topic-section {
+        margin-bottom: 32px;
+      }
+      .topic-section-title {
+        font-family: "Syne", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .topic-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .topic-table th {
+        text-align: left;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 8px 12px;
+        background: var(--bg);
+        font-family: "DM Mono", monospace;
+      }
+      .topic-table th:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+      .topic-table th:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+      .topic-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      .topic-table tr:last-child td {
+        border-bottom: none;
+      }
+      .topic-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* Status badge */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: "DM Mono", monospace;
+        white-space: nowrap;
+      }
+      .badge-todo {
+        background: rgba(100, 116, 139, 0.15);
+        color: var(--muted);
+        border: 1px solid rgba(100, 116, 139, 0.3);
+      }
+      .badge-progress {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warn);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+      .badge-done {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent3);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      /* Priority badges */
+      .pri-high {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .pri-med {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warn);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+      .pri-low {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent3);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      /* Editable cells */
+      select,
+      input[type="text"],
+      input[type="number"],
+      textarea {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        padding: 5px 10px;
+        outline: none;
+        transition: border-color 0.2s;
+        width: 100%;
+      }
+      select:focus,
+      input:focus,
+      textarea:focus {
+        border-color: var(--accent);
+      }
+      select {
+        cursor: pointer;
+      }
+
+      /* Stars rating */
+      .stars {
+        display: flex;
+        gap: 3px;
+        cursor: pointer;
+      }
+      .star {
+        font-size: 16px;
+        color: var(--border);
+        transition: color 0.15s;
+      }
+      .star.lit {
+        color: var(--warn);
+      }
+
+      /* Q-by-Q Analysis */
+      .qrow {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        align-items: flex-start;
+      }
+      .qrow:last-child {
+        border-bottom: none;
+      }
+      .q-num {
+        font-family: "DM Mono", monospace;
+        font-size: 12px;
+        color: var(--muted);
+        min-width: 28px;
+        padding-top: 2px;
+      }
+      .q-result {
+        font-size: 16px;
+        min-width: 24px;
+      }
+      .q-body {
+        flex: 1;
+      }
+      .q-topic {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .q-subject {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+        font-family: "DM Mono", monospace;
+      }
+      .q-concept {
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+      .q-diff {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        padding: 2px 8px;
+        border-radius: 20px;
+        white-space: nowrap;
+        align-self: flex-start;
+        margin-top: 2px;
+      }
+      .diff-easy {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent3);
+      }
+      .diff-med {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warn);
+      }
+      .diff-hard {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+
+      /* Plan cards */
+      .week-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px;
+        position: relative;
+        overflow: hidden;
+      }
+      .week-num {
+        font-family: "Syne", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+      }
+      .week-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 14px;
+      }
+      .week-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 13px;
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+      .week-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-top: 7px;
+        flex-shrink: 0;
+      }
+      .week-target {
+        margin-top: 14px;
+        padding: 10px 14px;
+        background: var(--bg);
+        border-radius: 8px;
+        font-size: 12px;
+        font-family: "DM Mono", monospace;
+        color: var(--muted);
+        border-left: 3px solid var(--accent);
+      }
+      .week-progress {
+        margin-top: 14px;
+      }
+      .week-pct-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      /* Mock test log */
+      .mock-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: var(--surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+      .mock-form-field label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 6px;
+        font-family: "DM Mono", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .btn {
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-family: "Syne", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        letter-spacing: 0.3px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #ea580c);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+      }
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .btn-sm {
+        padding: 6px 14px;
+        font-size: 12px;
+      }
+
+      .mock-list-item {
+        display: grid;
+        grid-template-columns: 90px 1fr 80px 80px 80px 80px auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 16px;
+        background: var(--surface);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        border: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .mock-score-chip {
+        font-family: "Syne", sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      /* Timeline planner */
+      .timeline {
+        position: relative;
+        padding-left: 30px;
+      }
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          to bottom,
+          var(--accent),
+          var(--accent2),
+          var(--accent3)
+        );
+        border-radius: 99px;
+      }
+      .timeline-item {
+        position: relative;
+        margin-bottom: 24px;
+      }
+      .timeline-dot {
+        position: absolute;
+        left: -26px;
+        top: 14px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid;
+        background: var(--bg);
+      }
+      .timeline-item:nth-child(1) .timeline-dot {
+        border-color: var(--accent);
+      }
+      .timeline-item:nth-child(2) .timeline-dot {
+        border-color: #f59e0b;
+      }
+      .timeline-item:nth-child(3) .timeline-dot {
+        border-color: var(--accent2);
+      }
+      .timeline-item:nth-child(4) .timeline-dot {
+        border-color: #8b5cf6;
+      }
+      .timeline-item:nth-child(5) .timeline-dot {
+        border-color: var(--accent3);
+      }
+      .timeline-item:nth-child(6) .timeline-dot {
+        border-color: #ec4899;
+      }
+      .timeline-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .timeline-month {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .timeline-focus {
+        font-family: "Syne", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .timeline-detail {
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.6;
+      }
+      .timeline-milestone {
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent3);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Donut chart (CSS) */
+      .donut-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+      .donut {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .donut-inner {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        background: var(--card);
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .donut-pct {
+        font-family: "Syne", sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .donut-lbl {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .donut-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+      }
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* Alert tip box */
+      .tip-box {
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        display: flex;
+        gap: 10px;
+      }
+      .tip-box.orange {
+        background: rgba(249, 115, 22, 0.08);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        color: #fdba74;
+      }
+      .tip-box.blue {
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+      }
+      .tip-box.green {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+      }
+
+      /* Save toast */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--accent3);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 9999;
+        pointer-events: none;
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* Section gap */
+      .section {
+        margin-bottom: 28px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header {
+          padding: 16px;
+        }
+        .main {
+          padding: 16px;
+        }
+        .mock-list-item {
+          grid-template-columns: 1fr 1fr;
+          font-size: 12px;
+        }
+      }
+
+      .filter-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+        align-items: center;
+      }
+      .filter-chip {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--muted);
+        transition: all 0.15s;
+        font-family: "DM Mono", monospace;
+      }
+      .filter-chip.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .scrollable {
+        max-height: 520px;
+        overflow-y: auto;
+        padding-right: 6px;
+      }
+      .scrollable::-webkit-scrollbar {
+        width: 4px;
+      }
+      .scrollable::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      .scrollable::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 99px;
+      }
+
+      .separator {
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+      }
+      .input-group {
+        flex: 1;
+        min-width: 140px;
+      }
+      .input-group label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 6px;
+        font-family: "DM Mono", monospace;
+        text-transform: uppercase;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .empty-state .emo {
+        font-size: 36px;
+        margin-bottom: 10px;
+      }
+      /* ===== Mobile Improvements (add-on only) ===== */
+      @media (max-width: 768px) {
+        .header-stats {
+          gap: 12px;
+          justify-content: flex-start;
+        }
+        .hstat {
+          min-width: 120px;
+        }
+        .hstat-val {
+          font-size: 18px;
+        }
+
+        .nav {
+          padding: 0 12px;
+        }
+        .tab {
+          padding: 12px 14px;
+          font-size: 12px;
+        }
+
+        .main {
+          padding: 14px 12px;
+        }
+        .card {
+          padding: 16px;
+        }
+
+        /* Topic tables should scroll on small screens */
+        .topic-section {
+          overflow-x: auto;
+        }
+        .topic-table {
+          min-width: 900px;
+        } /* keeps columns readable */
+
+        /* Inputs: keep touch friendly */
+        select,
+        input[type="text"],
+        input[type="number"],
+        textarea {
+          padding: 10px 12px;
+          font-size: 14px;
+        }
+
+        /* Toast better on mobile */
+        .toast {
+          right: 12px;
+          left: 12px;
+          bottom: 14px;
+          text-align: center;
+        }
+      }
+
+      /* Improve tap targets */
+      button,
+      .filter-chip,
+      .tab {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon">🚂</div>
+          <div class="logo-text">
+            <h1>RRB ALP Tracker</h1>
+            <p>Ravi Kumar · Roll: 1112512600131360</p>
+          </div>
+        </div>
+        <div class="header-stats">
+          <div class="hstat">
+            <div class="hstat-val" id="h-overall">—</div>
+            <div class="hstat-label">Overall Progress</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val" id="h-mocks">0</div>
+            <div class="hstat-label">Mocks Taken</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val" id="h-score">16.67</div>
+            <div class="hstat-label">Last CBT Score</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-val" id="h-target">55+</div>
+            <div class="hstat-label">Target Score</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="nav">
+      <div class="nav-inner">
+        <button class="tab active" onclick="showTab('dashboard')">
+          📊 Dashboard
+        </button>
+        <button class="tab" onclick="showTab('tracker')">
+          ✅ Topic Tracker
+        </button>
+        <button class="tab" onclick="showTab('plan')">📅 Study Plan</button>
+        <button class="tab" onclick="showTab('mocks')">🎯 Mock Tests</button>
+        <button class="tab" onclick="showTab('analysis')">
+          🔍 Exam Analysis
+        </button>
+        <button class="tab" onclick="showTab('resources')">📚 Resources</button>
+      </div>
+    </nav>
+
+    <main class="main">
+      <!-- ===== DASHBOARD ===== -->
+      <div id="page-dashboard" class="page active">
+        <div class="section">
+          <div class="grid-4" style="margin-bottom: 20px">
+            <div class="stat-card orange">
+              <div class="stat-val">16.67</div>
+              <div class="stat-label">CBT 1 Score (Feb 2026)</div>
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    style="
+                      width: 22%;
+                      background: linear-gradient(
+                        90deg,
+                        var(--accent),
+                        #fb923c
+                      );
+                    "
+                  ></div>
+                </div>
+                <div class="progress-meta">
+                  <span>22.2% of 75</span><span>Target: 55+</span>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card red">
+              <div class="stat-val">28</div>
+              <div class="stat-label">Wrong Answers (−9.33 pts)</div>
+            </div>
+            <div class="stat-card blue">
+              <div class="stat-val">26</div>
+              <div class="stat-label">Correct Answers</div>
+            </div>
+            <div class="stat-card yellow">
+              <div class="stat-val">21</div>
+              <div class="stat-label">Skipped (No Penalty)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2 section">
+          <!-- Subject accuracy -->
+          <div class="card">
+            <div class="card-title">📊 Subject-wise Accuracy</div>
+            <div class="subject-row">
+              <div class="subject-name">General Science & GK</div>
+              <div class="subject-bar-wrap">
+                <div class="subject-bar">
+                  <div
+                    class="subject-bar-fill"
+                    style="
+                      width: 70%;
+                      background: linear-gradient(
+                        90deg,
+                        var(--accent3),
+                        #34d399
+                      );
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div class="subject-pct" style="color: var(--accent3)">70%</div>
+            </div>
+            <div class="subject-row">
+              <div class="subject-name">Reasoning</div>
+              <div class="subject-bar-wrap">
+                <div class="subject-bar">
+                  <div
+                    class="subject-bar-fill"
+                    style="
+                      width: 48%;
+                      background: linear-gradient(90deg, var(--warn), #fcd34d);
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div class="subject-pct" style="color: var(--warn)">48%</div>
+            </div>
+            <div class="subject-row">
+              <div class="subject-name">Mathematics</div>
+              <div class="subject-bar-wrap">
+                <div class="subject-bar">
+                  <div
+                    class="subject-bar-fill"
+                    style="
+                      width: 35%;
+                      background: linear-gradient(
+                        90deg,
+                        var(--danger),
+                        #f87171
+                      );
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div class="subject-pct" style="color: var(--danger)">35%</div>
+            </div>
+            <div
+              style="
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border);
+              "
+            >
+              <div class="subject-row">
+                <div
+                  class="subject-name"
+                  style="font-weight: 700; color: var(--text)"
+                >
+                  Overall
+                </div>
+                <div class="subject-bar-wrap">
+                  <div class="subject-bar">
+                    <div
+                      class="subject-bar-fill"
+                      style="
+                        width: 48%;
+                        background: linear-gradient(
+                          90deg,
+                          var(--accent),
+                          var(--accent2)
+                        );
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div class="subject-pct" style="color: var(--accent)">48%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key insights -->
+          <div class="card">
+            <div class="card-title">💡 Key Insights</div>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <div class="tip-box orange">
+                <span style="font-size: 18px; flex-shrink: 0">⚠️</span>
+                <div>
+                  <strong>Biggest Issue:</strong> 28 wrong answers = −9.33 marks
+                  penalty. Accuracy must improve before attempting more
+                  questions.
+                </div>
+              </div>
+              <div class="tip-box blue">
+                <span style="font-size: 18px; flex-shrink: 0">🎯</span>
+                <div>
+                  <strong>Quick Win:</strong> 21 easy questions skipped in Math
+                  & GS. Recovering these alone = +5–7 marks instantly.
+                </div>
+              </div>
+              <div class="tip-box green">
+                <span style="font-size: 18px; flex-shrink: 0">🏆</span>
+                <div>
+                  <strong>Strength:</strong> GS & GK at 70% is solid. Focus
+                  energy on Math (35%) to maximize total score.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic completion overview -->
+        <div class="card section">
+          <div class="card-title">📈 Topic Completion Overview</div>
+          <div id="dash-topic-overview"></div>
+        </div>
+
+        <div class="grid-2 section">
+          <!-- 4-Week Plan mini -->
+          <div class="card">
+            <div class="card-title">📅 4-Week Action Plan</div>
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 6px;
+                  "
+                >
+                  <span style="font-size: 13px; font-weight: 600"
+                    >Week 1 — Fix Easy Mistakes</span
+                  >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-family: 'DM Mono', monospace;
+                      color: var(--accent3);
+                    "
+                    id="w1done"
+                    >0%</span
+                  >
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="w1bar"
+                    style="
+                      width: 0%;
+                      background: linear-gradient(
+                        90deg,
+                        var(--accent3),
+                        #34d399
+                      );
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 6px;
+                  "
+                >
+                  <span style="font-size: 13px; font-weight: 600"
+                    >Week 2 — Reasoning Accuracy</span
+                  >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-family: 'DM Mono', monospace;
+                      color: var(--warn);
+                    "
+                    id="w2done"
+                    >0%</span
+                  >
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="w2bar"
+                    style="
+                      width: 0%;
+                      background: linear-gradient(90deg, var(--warn), #fcd34d);
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 6px;
+                  "
+                >
+                  <span style="font-size: 13px; font-weight: 600"
+                    >Week 3 — Medium Math Topics</span
+                  >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-family: 'DM Mono', monospace;
+                      color: var(--accent2);
+                    "
+                    id="w3done"
+                    >0%</span
+                  >
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="w3bar"
+                    style="
+                      width: 0%;
+                      background: linear-gradient(
+                        90deg,
+                        var(--accent2),
+                        #60a5fa
+                      );
+                    "
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 6px;
+                  "
+                >
+                  <span style="font-size: 13px; font-weight: 600"
+                    >Week 4 — Full Mock Tests</span
+                  >
+                  <span
+                    style="
+                      font-size: 12px;
+                      font-family: 'DM Mono', monospace;
+                      color: #a78bfa;
+                    "
+                    id="w4done"
+                    >0%</span
+                  >
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    id="w4bar"
+                    style="
+                      width: 0%;
+                      background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+                    "
+                  ></div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 16px">
+              <button class="btn btn-primary btn-sm" onclick="showTab('plan')">
+                View Full Plan →
+              </button>
+            </div>
+          </div>
+
+          <!-- Exam strategy -->
+          <div class="card">
+            <div class="card-title">⚡ Exam-Day Strategy</div>
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Attempt Order</span
+                >
+                <span>GS first → Math → Reasoning last</span>
+              </div>
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Time Split</span
+                >
+                <span>GS: 12 min · Math: 22 min · Reasoning: 26 min</span>
+              </div>
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Skip Rule</span
+                >
+                <span>Unsure after 30 sec → Skip, return later</span>
+              </div>
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Neg Marking</span
+                >
+                <span>Only attempt if ≥2 options eliminated</span>
+              </div>
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Easy Qs</span
+                >
+                <span>Ensure ALL easy questions are attempted</span>
+              </div>
+              <div style="display: flex; gap: 10px; font-size: 13px">
+                <span
+                  style="
+                    color: var(--accent);
+                    font-weight: 700;
+                    min-width: 120px;
+                    font-family: 'DM Mono', monospace;
+                  "
+                  >Puzzles</span
+                >
+                <span>Draw on rough sheet — 2 min max, else skip</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TOPIC TRACKER ===== -->
+      <div id="page-tracker" class="page">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+          "
+        >
+          <h2
+            style="
+              font-family: 'Syne', sans-serif;
+              font-size: 20px;
+              font-weight: 800;
+            "
+          >
+            ✅ Topic Progress Tracker
+          </h2>
+          <div style="display: flex; gap: 10px">
+            <button class="btn btn-secondary btn-sm" onclick="exportProgress()">
+              📥 Export
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="saveAll()">
+              💾 Save All
+            </button>
+          </div>
+        </div>
+        <div class="filter-bar">
+          <span
+            style="
+              font-size: 12px;
+              color: var(--muted);
+              font-family: 'DM Mono', monospace;
+            "
+            >Filter:</span
+          >
+          <span class="filter-chip active" onclick="filterTopics('all',this)"
+            >All</span
+          >
+          <span class="filter-chip" onclick="filterTopics('todo',this)"
+            >📋 To Do</span
+          >
+          <span class="filter-chip" onclick="filterTopics('progress',this)"
+            >⏳ In Progress</span
+          >
+          <span class="filter-chip" onclick="filterTopics('done',this)"
+            >✅ Done</span
+          >
+        </div>
+        <div id="topic-tracker-container"></div>
+      </div>
+
+      <!-- ===== STUDY PLAN ===== -->
+      <div id="page-plan" class="page">
+        <h2
+          style="
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+          "
+        >
+          📅 Study Plan
+        </h2>
+
+        <div class="grid-2 section">
+          <!-- 4-Week Plan -->
+          <div>
+            <div
+              style="
+                font-family: 'Syne', sans-serif;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 14px;
+                color: var(--accent);
+              "
+            >
+              4-Week Intensive Plan (Post-Exam Recovery)
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div class="week-card">
+                <div class="week-num">Week 1</div>
+                <div class="week-title">Fix ALL Easy Mistakes</div>
+                <div class="week-item">
+                  <div class="week-dot"></div>
+                  <span>Capillaries vs Arterioles (NCERT Bio Ch5)</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot"></div>
+                  <span>Indian bee species (Apis cerana indica)</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot"></div>
+                  <span>Colloids stability concept</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot"></div>
+                  <span>BODMAS errors — bracket order</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot"></div>
+                  <span>Successive % formula: (1+p1)(1+p2)−1</span>
+                </div>
+                <div class="week-target">
+                  📌 Daily: 30 GS MCQs + 20 Math MCQs + NCERT Ch3,5,10
+                </div>
+                <div class="week-progress">
+                  <div class="week-pct-label">
+                    <span>Progress</span><span id="w1-pct-label">0%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      id="w1-fill"
+                      style="
+                        width: 0%;
+                        background: linear-gradient(
+                          90deg,
+                          var(--accent3),
+                          #34d399
+                        );
+                      "
+                    ></div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0"
+                    id="w1-slider"
+                    oninput="updateWeek(1,this.value)"
+                    style="
+                      width: 100%;
+                      margin-top: 8px;
+                      accent-color: var(--accent3);
+                    "
+                  />
+                </div>
+              </div>
+              <div class="week-card">
+                <div class="week-num">Week 2</div>
+                <div class="week-title">Reasoning Accuracy</div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: var(--warn)"></div>
+                  <span>Floor/Seating puzzles — draw on rough sheet</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: var(--warn)"></div>
+                  <span>Coded Blood Relations — family tree method</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: var(--warn)"></div>
+                  <span>Syllogism — Venn diagram method</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: var(--warn)"></div>
+                  <span>Direction-Distance — draw each turn</span>
+                </div>
+                <div class="week-target">
+                  📌 Daily: 40 Reasoning MCQs + 5 timed puzzles
+                </div>
+                <div class="week-progress">
+                  <div class="week-pct-label">
+                    <span>Progress</span><span id="w2-pct-label">0%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      id="w2-fill"
+                      style="
+                        width: 0%;
+                        background: linear-gradient(
+                          90deg,
+                          var(--warn),
+                          #fcd34d
+                        );
+                      "
+                    ></div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0"
+                    id="w2-slider"
+                    oninput="updateWeek(2,this.value)"
+                    style="
+                      width: 100%;
+                      margin-top: 8px;
+                      accent-color: var(--warn);
+                    "
+                  />
+                </div>
+              </div>
+              <div class="week-card">
+                <div class="week-num">Week 3</div>
+                <div class="week-title">Medium Math Topics</div>
+                <div class="week-item">
+                  <div
+                    class="week-dot"
+                    style="background: var(--accent2)"
+                  ></div>
+                  <span>Average Speed — Total dist / Total time</span>
+                </div>
+                <div class="week-item">
+                  <div
+                    class="week-dot"
+                    style="background: var(--accent2)"
+                  ></div>
+                  <span>Ratio & Profit-Loss problems</span>
+                </div>
+                <div class="week-item">
+                  <div
+                    class="week-dot"
+                    style="background: var(--accent2)"
+                  ></div>
+                  <span>Number analogy patterns (×n+c, n²+c)</span>
+                </div>
+                <div class="week-item">
+                  <div
+                    class="week-dot"
+                    style="background: var(--accent2)"
+                  ></div>
+                  <span>CI/SI formulas and PYQs 2023–2025</span>
+                </div>
+                <div class="week-target">
+                  📌 Daily: 50 Math MCQs + PYQ section tests
+                </div>
+                <div class="week-progress">
+                  <div class="week-pct-label">
+                    <span>Progress</span><span id="w3-pct-label">0%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      id="w3-fill"
+                      style="
+                        width: 0%;
+                        background: linear-gradient(
+                          90deg,
+                          var(--accent2),
+                          #60a5fa
+                        );
+                      "
+                    ></div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0"
+                    id="w3-slider"
+                    oninput="updateWeek(3,this.value)"
+                    style="
+                      width: 100%;
+                      margin-top: 8px;
+                      accent-color: var(--accent2);
+                    "
+                  />
+                </div>
+              </div>
+              <div class="week-card">
+                <div class="week-num">Week 4</div>
+                <div class="week-title">Full Mock Tests & Speed</div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: #a78bfa"></div>
+                  <span>2 full 75-Q mocks per day</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: #a78bfa"></div>
+                  <span>Review every wrong answer after mock</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: #a78bfa"></div>
+                  <span>Attempt ALL easy Qs first strategy</span>
+                </div>
+                <div class="week-item">
+                  <div class="week-dot" style="background: #a78bfa"></div>
+                  <span>Time management: 60 min hard limit</span>
+                </div>
+                <div class="week-target">🎯 Target: 55–60 / 75 in mocks</div>
+                <div class="week-progress">
+                  <div class="week-pct-label">
+                    <span>Progress</span><span id="w4-pct-label">0%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div
+                      class="progress-fill"
+                      id="w4-fill"
+                      style="
+                        width: 0%;
+                        background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+                      "
+                    ></div>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0"
+                    id="w4-slider"
+                    oninput="updateWeek(4,this.value)"
+                    style="width: 100%; margin-top: 8px; accent-color: #a78bfa"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6-Month Timeline -->
+          <div>
+            <div
+              style="
+                font-family: 'Syne', sans-serif;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 14px;
+                color: var(--accent2);
+              "
+            >
+              6-Month Full Preparation Timeline
+            </div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 1</div>
+                  <div class="timeline-focus">Math Foundation</div>
+                  <div class="timeline-detail">
+                    Number System, Simplification, Percentage, Ratio · 3–4
+                    hrs/day
+                  </div>
+                  <div class="timeline-milestone">
+                    🏁 Master basic arithmetic
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 2</div>
+                  <div class="timeline-focus">Reasoning + GK</div>
+                  <div class="timeline-detail">
+                    Analogies, Series, GS & Science basics · 3–4 hrs/day
+                  </div>
+                  <div class="timeline-milestone">🏁 100 MCQs/day practice</div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 3</div>
+                  <div class="timeline-focus">Technical Subjects</div>
+                  <div class="timeline-detail">
+                    Basic Engg: Electrical, Mechanical, Auto, IT fundamentals ·
+                    4–5 hrs/day
+                  </div>
+                  <div class="timeline-milestone">
+                    🏁 Complete Part B syllabus
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 4</div>
+                  <div class="timeline-focus">Mock Tests CBT 1</div>
+                  <div class="timeline-detail">
+                    Full-length CBT 1 mocks + revision · 4–5 hrs/day
+                  </div>
+                  <div class="timeline-milestone">
+                    🏁 Score ≥ 60/75 in mocks
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 5</div>
+                  <div class="timeline-focus">Mock Tests CBT 2</div>
+                  <div class="timeline-detail">
+                    CBT 2 mocks + weak-area revision · 5–6 hrs/day
+                  </div>
+                  <div class="timeline-milestone">
+                    🏁 Score ≥ 70/100 in mocks
+                  </div>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-month">Month 6</div>
+                  <div class="timeline-focus">Final Revision + CBAT</div>
+                  <div class="timeline-detail">
+                    Rapid revision + aptitude drills + memory exercises · 5–6
+                    hrs/day
+                  </div>
+                  <div class="timeline-milestone">🏁 Confidence & speed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Schedule -->
+        <div class="card section">
+          <div class="card-title">📋 Weekly Study Schedule</div>
+          <div style="overflow-x: auto">
+            <table
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+                min-width: 700px;
+              "
+            >
+              <thead>
+                <tr>
+                  <th
+                    style="
+                      padding: 10px 12px;
+                      background: var(--bg);
+                      color: var(--muted);
+                      text-align: left;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Time Slot
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: var(--accent);
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Mon
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: var(--accent2);
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Tue
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: var(--accent3);
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Wed
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: var(--warn);
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Thu
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: #a78bfa;
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Fri
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: #ec4899;
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Sat
+                  </th>
+                  <th
+                    style="
+                      padding: 10px 8px;
+                      background: var(--bg);
+                      color: var(--accent);
+                      text-align: center;
+                      font-family: 'DM Mono', monospace;
+                      font-size: 11px;
+                    "
+                  >
+                    Sun
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="schedule-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== MOCK TESTS ===== -->
+      <div id="page-mocks" class="page">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+          "
+        >
+          <h2
+            style="
+              font-family: 'Syne', sans-serif;
+              font-size: 20px;
+              font-weight: 800;
+            "
+          >
+            🎯 Mock Test Log
+          </h2>
+        </div>
+
+        <div class="card section">
+          <div class="card-title">➕ Log New Mock Test</div>
+          <div class="mock-form">
+            <div class="mock-form-field">
+              <label>Date</label>
+              <input type="date" id="mock-date" />
+            </div>
+            <div class="mock-form-field">
+              <label>Platform</label>
+              <select id="mock-platform">
+                <option>Testbook</option>
+                <option>Adda247</option>
+                <option>Oliveboard</option>
+                <option>Unacademy</option>
+                <option>Previous Year Paper</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="mock-form-field">
+              <label>Type</label>
+              <select id="mock-type">
+                <option>CBT 1 Full</option>
+                <option>CBT 2 Part A</option>
+                <option>Math Section</option>
+                <option>Reasoning Section</option>
+                <option>GS Section</option>
+              </select>
+            </div>
+            <div class="mock-form-field">
+              <label>Total Qs</label>
+              <input type="number" id="mock-total" value="75" min="1" />
+            </div>
+            <div class="mock-form-field">
+              <label>Correct</label>
+              <input type="number" id="mock-correct" value="0" min="0" />
+            </div>
+            <div class="mock-form-field">
+              <label>Wrong</label>
+              <input type="number" id="mock-wrong" value="0" min="0" />
+            </div>
+            <div class="mock-form-field">
+              <label>Skipped</label>
+              <input type="number" id="mock-skipped" value="0" min="0" />
+            </div>
+            <div class="mock-form-field">
+              <label>Notes</label>
+              <input
+                type="text"
+                id="mock-notes"
+                placeholder="e.g. weak in reasoning"
+              />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addMock()">
+            ➕ Add Mock Test
+          </button>
+        </div>
+
+        <div class="card section">
+          <div class="card-title">📋 Mock Test History</div>
+          <div id="mock-list">
+            <div class="empty-state">
+              <div class="emo">📝</div>
+              No mock tests logged yet. Add your first one above!
+            </div>
+          </div>
+        </div>
+
+        <div class="card section">
+          <div class="card-title">📈 Score Trend</div>
+          <canvas id="trendChart" height="160" style="width: 100%"></canvas>
+        </div>
+      </div>
+
+      <!-- ===== EXAM ANALYSIS ===== -->
+      <div id="page-analysis" class="page">
+        <h2
+          style="
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+          "
+        >
+          🔍 CBT 1 Exam Analysis (Feb 17, 2026)
+        </h2>
+
+        <div class="filter-bar">
+          <span
+            style="
+              font-size: 12px;
+              color: var(--muted);
+              font-family: 'DM Mono', monospace;
+            "
+            >Filter by result:</span
+          >
+          <span class="filter-chip active" onclick="filterQ('all',this)"
+            >All (54)</span
+          >
+          <span class="filter-chip" onclick="filterQ('correct',this)"
+            >✅ Correct</span
+          >
+          <span class="filter-chip" onclick="filterQ('wrong',this)"
+            >❌ Wrong</span
+          >
+          <span class="filter-chip" onclick="filterQ('skipped',this)"
+            >⚠ Skipped</span
+          >
+        </div>
+
+        <div class="card">
+          <div class="scrollable" id="q-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== RESOURCES ===== -->
+      <div id="page-resources" class="page">
+        <h2
+          style="
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+          "
+        >
+          📚 Books & Resources
+        </h2>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🔢 Mathematics</div>
+            <table class="topic-table">
+              <thead>
+                <tr>
+                  <th>Book</th>
+                  <th>Author</th>
+                  <th>Why Use It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Quantitative Aptitude</td>
+                  <td>R.S. Aggarwal</td>
+                  <td>Best for concept + practice</td>
+                </tr>
+                <tr>
+                  <td>Fast Track Arithmetic</td>
+                  <td>Rajesh Verma</td>
+                  <td>Speed math techniques</td>
+                </tr>
+                <tr>
+                  <td>NCERT Math Class 9 & 10</td>
+                  <td>NCERT</td>
+                  <td>Foundation for all topics</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">🧠 Reasoning</div>
+            <table class="topic-table">
+              <thead>
+                <tr>
+                  <th>Book</th>
+                  <th>Author</th>
+                  <th>Why Use It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>A Modern Approach to Verbal Reasoning</td>
+                  <td>R.S. Aggarwal</td>
+                  <td>Complete verbal reasoning</td>
+                </tr>
+                <tr>
+                  <td>A Modern Approach to Non-Verbal</td>
+                  <td>R.S. Aggarwal</td>
+                  <td>Figures & pattern problems</td>
+                </tr>
+                <tr>
+                  <td>Analytical Reasoning</td>
+                  <td>M.K. Pandey</td>
+                  <td>Advanced reasoning concepts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">🌍 General Science & GK</div>
+            <table class="topic-table">
+              <thead>
+                <tr>
+                  <th>Book</th>
+                  <th>Author</th>
+                  <th>Why Use It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Lucent's General Knowledge</td>
+                  <td>Lucent Team</td>
+                  <td>One-stop GK reference</td>
+                </tr>
+                <tr>
+                  <td>NCERT Science Class 9 & 10</td>
+                  <td>NCERT</td>
+                  <td>Physics, Chem, Biology base</td>
+                </tr>
+                <tr>
+                  <td>Manorama Year Book</td>
+                  <td>Mammen Mathew</td>
+                  <td>Current affairs + annual data</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">🔧 Technical (Engineering)</div>
+            <table class="topic-table">
+              <thead>
+                <tr>
+                  <th>Book</th>
+                  <th>Author</th>
+                  <th>Why Use It</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>RRB ALP Technical Guide</td>
+                  <td>Arihant Experts</td>
+                  <td>All branches: Elec, Mech, Auto</td>
+                </tr>
+                <tr>
+                  <td>Electrical Technology Vol 1</td>
+                  <td>B.L. Theraja</td>
+                  <td>Electrical trade syllabus</td>
+                </tr>
+                <tr>
+                  <td>Workshop Technology</td>
+                  <td>Hajra Choudhary</td>
+                  <td>Mechanical trade syllabus</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" style="grid-column: 1/-1">
+            <div class="card-title">💻 Online Resources</div>
+            <div class="grid-3">
+              <div
+                style="
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 10px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <div style="font-weight: 700; margin-bottom: 4px">
+                  Testbook / Adda247 / Oliveboard
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">
+                  Full-length CBT 1 & 2 mocks
+                </div>
+              </div>
+              <div
+                style="
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 10px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <div style="font-weight: 700; margin-bottom: 4px">
+                  Indiabix.com
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">
+                  Topic-wise MCQ practice
+                </div>
+              </div>
+              <div
+                style="
+                  padding: 16px;
+                  background: var(--bg);
+                  border-radius: 10px;
+                  border: 1px solid var(--border);
+                "
+              >
+                <div style="font-weight: 700; margin-bottom: 4px">
+                  YouTube — RRB ALP
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">
+                  Free video explanations
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 16px" class="tip-box orange">
+              <span>💡</span>
+              <div>
+                Tip: Revise current affairs monthly — focus on Railways, Science
+                & Tech, National events. Use Manorama or AffairsCloud app.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">✅ Progress saved!</div>
+
+    <script>
+      // ==================== DATA ====================
+      const TOPICS = {
+        Mathematics: [
+          "Number System",
+          "Simplification",
+          "Percentage",
+          "Ratio & Proportion",
+          "Average",
+          "Time-Speed-Distance",
+          "Time & Work",
+          "Algebra",
+          "Geometry & Mensuration",
+          "Data Interpretation",
+        ],
+        Reasoning: [
+          "Analogies",
+          "Series (Num & Letter)",
+          "Coding-Decoding",
+          "Blood Relations",
+          "Direction & Distance",
+          "Syllogism",
+          "Non-Verbal Reasoning",
+          "Math Operations",
+          "Seating Arrangement",
+          "Puzzles",
+        ],
+        "General Science & GK": [
+          "Physics — Motion & Laws",
+          "Physics — Electricity",
+          "Physics — Light & Sound",
+          "Chemistry — Elements",
+          "Chemistry — Acids & Bases",
+          "Biology — Cell & Life",
+          "Biology — Human Body",
+          "Static GK",
+          "Current Affairs",
+          "Indian Railways",
+        ],
+        "Technical (Engineering)": [
+          "Basic Electrical",
+          "Basic Electronics",
+          "Mechanical Fundamentals",
+          "Automobile Basics",
+          "IT & Computing",
+          "Engineering Drawing",
+          "Workshop Technology",
+        ],
+      };
+
+      const PREP_TOPICS = {
+        "General Science & GK": [
+          {
+            topic: "Circulatory System",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Revise NCERT Bio Ch5: Blood vessels hierarchy",
+          },
+          {
+            topic: "Colloids",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Key: colloid = stable because particles don't settle",
+          },
+          {
+            topic: "Indian Bee Species",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Apis cerana indica = Indian honey bee. Memorise species.",
+          },
+        ],
+        Reasoning: [
+          {
+            topic: "Coded Blood Relations",
+            wrong: 2,
+            skipped: 0,
+            priority: "LOW",
+            action: "Draw family tree step by step per symbol",
+          },
+          {
+            topic: "Letter Analogy Pattern",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Practice: find gap between paired letters carefully",
+          },
+          {
+            topic: "Floor Arrangement (7-people)",
+            wrong: 1,
+            skipped: 0,
+            priority: "LOW",
+            action: "Visualise from top; constraints from above/below",
+          },
+          {
+            topic: "Letter Pair Pattern",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Identify 1st-letter rule separately from rest",
+          },
+          {
+            topic: "Number Analogy Pattern",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Test ×n+c and n²+c patterns first",
+          },
+          {
+            topic: "Number Set Pattern",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Check a×b±k; verify with both given sets",
+          },
+          {
+            topic: "Consonant b/w Vowels Count",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Scan carefully; check BOTH preceding AND following chars",
+          },
+          {
+            topic: "Age Order Logic",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "List all constraints; order from top/bottom methodically",
+          },
+          {
+            topic: "Number Coding (Letter=Code)",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Solve 20+ PYQs on this topic",
+          },
+          {
+            topic: "Letter Number Coding",
+            wrong: 0,
+            skipped: 1,
+            priority: "HIGH",
+            action: "Map each letter to digit from given coded words",
+          },
+          {
+            topic: "Statements & Conclusions",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Check each conclusion independently using Venn diagram",
+          },
+        ],
+        Mathematics: [
+          {
+            topic: "BODMAS",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Always inner bracket → curly → square first",
+          },
+          {
+            topic: "Number Pattern",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Review with previous year questions",
+          },
+          {
+            topic: "Symbol Interchange",
+            wrong: 0,
+            skipped: 2,
+            priority: "HIGH",
+            action: "Solve 20+ PYQs on this topic",
+          },
+          {
+            topic: "Successive % Increase",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Formula: (1+p1)(1+p2)(1+p3)−1",
+          },
+          {
+            topic: "Cylinder Volume % Change",
+            wrong: 1,
+            skipped: 0,
+            priority: "LOW",
+            action: "V=πr²h; apply % changes to r and h carefully",
+          },
+          {
+            topic: "Number Pattern +4/+6 alt",
+            wrong: 1,
+            skipped: 0,
+            priority: "HIGH",
+            action: "Review with previous year questions",
+          },
+          {
+            topic: "Average Speed",
+            wrong: 1,
+            skipped: 0,
+            priority: "MED",
+            action: "Avg speed = Total dist / Total time (NOT avg of speeds)",
+          },
+        ],
+      };
+
+      const QUESTIONS = [
+        {
+          q: 1,
+          sub: "General Science & GK",
+          topic: "Circulatory System",
+          result: "wrong",
+          diff: "Easy",
+          concept: "Capillaries = thinnest 1-cell vessels. NOT arterioles.",
+        },
+        {
+          q: 2,
+          sub: "Reasoning",
+          topic: "Triad Pattern (Letter)",
+          result: "correct",
+          diff: "Hard",
+          concept: "Pattern: +6 shift per letter. Good solve.",
+        },
+        {
+          q: 3,
+          sub: "Reasoning",
+          topic: "Letter Analogy Pattern",
+          result: "wrong",
+          diff: "Medium",
+          concept: "LOVE→QKYC: +5,−2,+5,−2 pattern. Check letter gaps.",
+        },
+        {
+          q: 4,
+          sub: "General Science & GK",
+          topic: "Refraction of Light",
+          result: "correct",
+          diff: "Easy",
+          concept: "Refraction = change of direction between media.",
+        },
+        {
+          q: 5,
+          sub: "General Science & GK",
+          topic: "Sports Events 2025",
+          result: "correct",
+          diff: "Easy",
+          concept: "World Para Athletics 2025 — New Delhi. Good recall.",
+        },
+        {
+          q: 6,
+          sub: "Reasoning",
+          topic: "Floor Arrangement (7-people)",
+          result: "wrong",
+          diff: "Hard",
+          concept: "C on 5th, E on 2nd, B on 3rd, DF together → A on Floor 4.",
+        },
+        {
+          q: 7,
+          sub: "Mathematics",
+          topic: "Pipes & Cisterns / Work",
+          result: "correct",
+          diff: "Medium",
+          concept: "A+B=10d, B+C=15d → A+C=120 days. Correct.",
+        },
+        {
+          q: 8,
+          sub: "Reasoning",
+          topic: "Letter Pair Pattern",
+          result: "wrong",
+          diff: "Medium",
+          concept: "Pattern: 1st letter+1, others −3. CJE:DGA correct.",
+        },
+        {
+          q: 9,
+          sub: "Reasoning",
+          topic: "Statements & Conclusions",
+          result: "correct",
+          diff: "Easy",
+          concept: "Speakers⊂Radios, Radios∩TV=∅ → No speaker is TV.",
+        },
+        {
+          q: 10,
+          sub: "Reasoning",
+          topic: "Letter Cluster Odd One Out",
+          result: "skipped",
+          diff: "Medium",
+          concept:
+            "OL-JG(−5), LI-GD(−5), UR-PM(−5) but SP-LJ(−3,−6). D is odd.",
+        },
+        {
+          q: 11,
+          sub: "Reasoning",
+          topic: "Seating Data Sufficiency",
+          result: "correct",
+          diff: "Hard",
+          concept: "Both stmts together also insufficient.",
+        },
+        {
+          q: 12,
+          sub: "Reasoning",
+          topic: "Number Analogy Pattern",
+          result: "wrong",
+          diff: "Medium",
+          concept: "24→74: ×3+2=74. 36→110: ×3+2=110. 51→155.",
+        },
+        {
+          q: 13,
+          sub: "Reasoning",
+          topic: "Number Set Pattern",
+          result: "wrong",
+          diff: "Medium",
+          concept: "18×5−5=85, 11×7−5=72. Pattern: a×b−5.",
+        },
+        {
+          q: 14,
+          sub: "Mathematics",
+          topic: "Symbol Substitution BODMAS",
+          result: "correct",
+          diff: "Easy",
+          concept: "26÷2+14×4−18 = 13+56−18 = 51.",
+        },
+        {
+          q: 15,
+          sub: "Reasoning",
+          topic: "Letter Change + Arrange",
+          result: "correct",
+          diff: "Medium",
+          concept: "VISION→WJTJPO reverse alpha order → 4th = O.",
+        },
+        {
+          q: 16,
+          sub: "Reasoning",
+          topic: "Distance & Direction",
+          result: "correct",
+          diff: "Hard",
+          concept: "Net displacement: 13km North.",
+        },
+        {
+          q: 17,
+          sub: "Reasoning",
+          topic: "Number Series — Digits",
+          result: "correct",
+          diff: "Easy",
+          concept: "Highest=681(2nd digit=8), Lowest=315(3rd digit=5). 8+5=13.",
+        },
+        {
+          q: 18,
+          sub: "Reasoning",
+          topic: "Number Pair Pattern",
+          result: "correct",
+          diff: "Medium",
+          concept: "3→3³+1=28, 9→9³+1=730. 1→1³+1=2.",
+        },
+        {
+          q: 19,
+          sub: "Mathematics",
+          topic: "BODMAS",
+          result: "wrong",
+          diff: "Easy",
+          concept: "2−[2−3{2−(2−4)}÷2] = 2−[2−3{4}÷2] = 2−[2−6] = 6.",
+        },
+        {
+          q: 20,
+          sub: "Reasoning",
+          topic: "Height Order Sufficiency",
+          result: "correct",
+          diff: "Hard",
+          concept: "Cannot determine shortest with both stmts.",
+        },
+        {
+          q: 21,
+          sub: "Mathematics",
+          topic: "Mode",
+          result: "correct",
+          diff: "Easy",
+          concept: "41 appears 4 times. Mode=41.",
+        },
+        {
+          q: 22,
+          sub: "Mathematics",
+          topic: "SI Principal Calculation",
+          result: "skipped",
+          diff: "Easy",
+          concept: "SI=PRT/100 → P=480×100/(3×5)=₹3200.",
+        },
+        {
+          q: 23,
+          sub: "Mathematics",
+          topic: "Successive % Change",
+          result: "skipped",
+          diff: "Easy",
+          concept: "2100×1.15×0.80=1932.",
+        },
+        {
+          q: 24,
+          sub: "Mathematics",
+          topic: "Similar Triangles Area",
+          result: "skipped",
+          diff: "Medium",
+          concept: "PM:QM=4:7→Area ratio=(11/7)²×36=236.25cm².",
+        },
+        {
+          q: 25,
+          sub: "Mathematics",
+          topic: "Cube/4th Root Simplification",
+          result: "correct",
+          diff: "Medium",
+          concept: "∛2744=14, ⁴√4096=8. (14/8)×(4/42)×84=14.",
+        },
+        {
+          q: 26,
+          sub: "Reasoning",
+          topic: "Coded Blood Relations",
+          result: "wrong",
+          diff: "Hard",
+          concept: "D@M=brother of M. D is wife's brother of R.",
+        },
+        {
+          q: 27,
+          sub: "Reasoning",
+          topic: "Consonant b/w Vowels Count",
+          result: "wrong",
+          diff: "Medium",
+          concept: "ZAO: Z between A & O ✓; OGU: G between O & U ✓ = TWO.",
+        },
+        {
+          q: 28,
+          sub: "Reasoning",
+          topic: "Letter Triad Series",
+          result: "correct",
+          diff: "Hard",
+          concept: "CLW→WFQ→QZK→KTE→ENY. Pattern: last→1st.",
+        },
+        {
+          q: 29,
+          sub: "Mathematics",
+          topic: "Number Pattern",
+          result: "wrong",
+          diff: "Easy",
+          concept: "Pattern: +4,+12,+4,+12... 112+4=116.",
+        },
+        {
+          q: 30,
+          sub: "Mathematics",
+          topic: "Symbol Interchange",
+          result: "skipped",
+          diff: "Easy",
+          concept: "Swap + & −, × & ÷: 29+6−19÷19×8=27.",
+        },
+        {
+          q: 31,
+          sub: "General Science & GK",
+          topic: "Colloids",
+          result: "wrong",
+          diff: "Easy",
+          concept: "Colloids stable because particles DON'T settle.",
+        },
+        {
+          q: 32,
+          sub: "Mathematics",
+          topic: "Successive % Increase",
+          result: "wrong",
+          diff: "Medium",
+          concept: "1.10×1.20×1.15=1.518 → 51.8% increase.",
+        },
+        {
+          q: 33,
+          sub: "General Science & GK",
+          topic: "Sound Wave",
+          result: "correct",
+          diff: "Easy",
+          concept: "Sound: disturbance travels, not particles.",
+        },
+        {
+          q: 34,
+          sub: "Reasoning",
+          topic: "Coded Blood Relations",
+          result: "wrong",
+          diff: "Hard",
+          concept:
+            "M is mother of L's brother's daughter → Brother's daughter.",
+        },
+        {
+          q: 35,
+          sub: "Mathematics",
+          topic: "Cylinder Volume % Change",
+          result: "wrong",
+          diff: "Hard",
+          concept: "r→0.81r, h→2.29h. V'=1.5027V → ~50% increase.",
+        },
+        {
+          q: 36,
+          sub: "Mathematics",
+          topic: "Successive Discount + CP",
+          result: "correct",
+          diff: "Hard",
+          concept: "MP×0.4×0.69=324.3→MP=1175. CP=1175/1.25=940.",
+        },
+        {
+          q: 37,
+          sub: "Mathematics",
+          topic: "Number Pattern +4/+6 alt",
+          result: "wrong",
+          diff: "Easy",
+          concept: "Pattern: +4,+6,+4,+6... 56+4=60.",
+        },
+        {
+          q: 38,
+          sub: "Reasoning",
+          topic: "Age Order Logic",
+          result: "wrong",
+          diff: "Medium",
+          concept: "List all constraints; order from top/bottom methodically.",
+        },
+        {
+          q: 39,
+          sub: "Mathematics",
+          topic: "Number Coding (Letter=Code)",
+          result: "wrong",
+          diff: "Medium",
+          concept: "Review with previous year questions.",
+        },
+        {
+          q: 40,
+          sub: "General Science & GK",
+          topic: "Indian Bee Species",
+          result: "wrong",
+          diff: "Easy",
+          concept: "Apis cerana indica = Indian honey bee.",
+        },
+        {
+          q: 41,
+          sub: "Reasoning",
+          topic: "Scheduling (Days of week)",
+          result: "wrong",
+          diff: "Medium",
+          concept: "Place anchor person (Gudiya=Sun), work backwards.",
+        },
+        {
+          q: 42,
+          sub: "Reasoning",
+          topic: "Circular Seating",
+          result: "wrong",
+          diff: "Hard",
+          concept: "Fix one person; count clockwise/anticlockwise carefully.",
+        },
+        {
+          q: 43,
+          sub: "Reasoning",
+          topic: "Linear Seating",
+          result: "skipped",
+          diff: "Medium",
+          concept: "Fix reference persons; build left-right chain.",
+        },
+        {
+          q: 44,
+          sub: "Reasoning",
+          topic: "Letter Triad Series",
+          result: "skipped",
+          diff: "Medium",
+          concept: "Identify transformation rule from first pair.",
+        },
+        {
+          q: 45,
+          sub: "Reasoning",
+          topic: "Letter Change in Word",
+          result: "skipped",
+          diff: "Easy",
+          concept: "Apply change rule to each letter systematically.",
+        },
+        {
+          q: 46,
+          sub: "Reasoning",
+          topic: "Scheduling (Days)",
+          result: "skipped",
+          diff: "Medium",
+          concept: "Use anchor day and work through constraints.",
+        },
+        {
+          q: 47,
+          sub: "Reasoning",
+          topic: "Letter Pair Odd One Out",
+          result: "skipped",
+          diff: "Medium",
+          concept: "Find which pair doesn't follow the gap rule.",
+        },
+        {
+          q: 48,
+          sub: "Reasoning",
+          topic: "Floor Arrangement (6 ppl)",
+          result: "skipped",
+          diff: "Hard",
+          concept: "Draw floor plan; place fixed persons first.",
+        },
+        {
+          q: 49,
+          sub: "Mathematics",
+          topic: "Profit & Loss",
+          result: "correct",
+          diff: "Easy",
+          concept: "Standard formula application.",
+        },
+        {
+          q: 50,
+          sub: "Mathematics",
+          topic: "Ratio Problems",
+          result: "correct",
+          diff: "Easy",
+          concept: "Cross-multiplication method.",
+        },
+        {
+          q: 51,
+          sub: "General Science & GK",
+          topic: "Physics — Laws of Motion",
+          result: "correct",
+          diff: "Easy",
+          concept: "Newton's 3rd law application.",
+        },
+        {
+          q: 52,
+          sub: "General Science & GK",
+          topic: "Chemistry — Periodic Table",
+          result: "correct",
+          diff: "Easy",
+          concept: "Element properties.",
+        },
+        {
+          q: 53,
+          sub: "General Science & GK",
+          topic: "Biology — Photosynthesis",
+          result: "correct",
+          diff: "Easy",
+          concept: "Chlorophyll and sunlight.",
+        },
+        {
+          q: 54,
+          sub: "Mathematics",
+          topic: "Time & Work",
+          result: "skipped",
+          diff: "Medium",
+          concept: "Combined work rate formula.",
+        },
+      ];
+
+      const SCHEDULE = [
+        [
+          "6–8 AM",
+          "Math Practice",
+          "Reasoning Practice",
+          "Math Practice",
+          "Reasoning Practice",
+          "GS/Science",
+          "Mock Test (CBT1)",
+          "Mock Test (CBT2)",
+        ],
+        [
+          "8–9 AM",
+          "Breakfast / Break",
+          "Breakfast / Break",
+          "Breakfast / Break",
+          "Breakfast / Break",
+          "Breakfast / Break",
+          "Breakfast / Break",
+          "Breakfast / Break",
+        ],
+        [
+          "9–11 AM",
+          "New Math Topic",
+          "New Reasoning Topic",
+          "Technical Engg Topic",
+          "New Math Topic",
+          "New GS Topic",
+          "Mock Analysis",
+          "Mock Analysis",
+        ],
+        [
+          "11–1 PM",
+          "GS / Current Affairs",
+          "Technical Engg",
+          "Reasoning Revision",
+          "Technical Engg",
+          "Math Revision",
+          "Technical Study",
+          "Weak Area Revision",
+        ],
+        [
+          "1–2 PM",
+          "Lunch & Rest",
+          "Lunch & Rest",
+          "Lunch & Rest",
+          "Lunch & Rest",
+          "Lunch & Rest",
+          "Lunch & Rest",
+          "Lunch & Rest",
+        ],
+        [
+          "2–4 PM",
+          "Revision: Math",
+          "Revision: Reasoning",
+          "GS Study",
+          "Revision: Technical",
+          "Full Revision",
+          "GS & Current Affairs",
+          "CBAT Practice",
+        ],
+        [
+          "4–5 PM",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+          "Outdoor / Exercise",
+        ],
+        [
+          "5–7 PM",
+          "Previous Year Qs",
+          "Previous Year Qs",
+          "Previous Year Qs",
+          "Previous Year Qs",
+          "Previous Year Qs",
+          "Previous Year Qs",
+          "Light Reading / GK",
+        ],
+        [
+          "7–8 PM",
+          "Current Affairs",
+          "Current Affairs",
+          "Current Affairs",
+          "Current Affairs",
+          "Current Affairs",
+          "Current Affairs",
+          "Weekly Self Review",
+        ],
+        [
+          "8–9 PM",
+          "Formula Revision",
+          "Concept Notes",
+          "Formula Revision",
+          "Concept Notes",
+          "Formula Revision",
+          "Topic Summary",
+          "Rest & Relax",
+        ],
+      ];
+
+      // ==================== STATE ====================
+      let state = {
+        topics: {}, // topicKey -> {status, confidence, mockScore, notes}
+        prepTopics: {}, // section+topic -> {done}
+        weekProgress: { 1: 0, 2: 0, 3: 0, 4: 0 },
+        mocks: [],
+      };
+
+      function loadState() {
+        try {
+          const s = localStorage.getItem("rrb_alp_state");
+          if (s) state = JSON.parse(s);
+        } catch (e) {}
+      }
+      function saveState() {
+        localStorage.setItem("rrb_alp_state", JSON.stringify(state));
+        showToast();
+      }
+      function showToast() {
+        const t = document.getElementById("toast");
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2000);
+      }
+      function saveAll() {
+        saveState();
+      }
+
+      // ==================== TABS ====================
+      function showTab(tab) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById("page-" + tab).classList.add("active");
+        event.target.classList.add("active");
+        updateHeaderStats();
+      }
+
+      // ==================== HEADER ====================
+      function updateHeaderStats() {
+        const keys = Object.keys(state.topics);
+        const done = keys.filter(
+          (k) => state.topics[k]?.status === "done"
+        ).length;
+        const total = Object.values(TOPICS).flat().length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        document.getElementById("h-overall").textContent = pct + "%";
+        document.getElementById("h-mocks").textContent = state.mocks.length;
+      }
+
+      // ==================== TOPIC TRACKER ====================
+      function topicKey(section, topic) {
+        return section + "||" + topic;
+      }
+
+      function renderTopicTracker(filter = "all") {
+        const container = document.getElementById("topic-tracker-container");
+        let html = "";
+        const sectionEmojis = {
+          Mathematics: "🔢",
+          Reasoning: "🧠",
+          "General Science & GK": "🌍",
+          "Technical (Engineering)": "🔧",
+        };
+        const sectionColors = {
+          Mathematics: "var(--accent2)",
+          Reasoning: "var(--warn)",
+          "General Science & GK": "var(--accent3)",
+          "Technical (Engineering)": "#a78bfa",
+        };
+
+        for (const [section, topics] of Object.entries(TOPICS)) {
+          const topicsToShow = topics.filter((t) => {
+            if (filter === "all") return true;
+            const s = state.topics[topicKey(section, t)]?.status || "todo";
+            return s === filter;
+          });
+          if (!topicsToShow.length) continue;
+          html += `<div class="topic-section">
+      <div class="topic-section-title">
+        <span style="color:${sectionColors[section]}">${
+            sectionEmojis[section]
+          }</span>
+        ${section}
+        <span style="margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)">
+          ${
+            topics.filter(
+              (t) => state.topics[topicKey(section, t)]?.status === "done"
+            ).length
+          }/${topics.length} done
+        </span>
+      </div>
+      <table class="topic-table">
+        <thead><tr>
+          <th>Topic</th><th>Status</th><th>Confidence</th><th>Mock Score %</th><th>Notes</th><th style="text-align:center">Save</th>
+        </tr></thead>
+        <tbody>`;
+          for (const t of topicsToShow) {
+            const key = topicKey(section, t);
+            const d = state.topics[key] || {
+              status: "todo",
+              confidence: 0,
+              mockScore: "",
+              notes: "",
+            };
+            html += `<tr>
+        <td style="font-weight:500">${t}</td>
+        <td>
+          <select onchange="updateTopic('${key}','status',this.value)" style="width:140px">
+            <option value="todo" ${
+              d.status === "todo" ? "selected" : ""
+            }>📋 To Do</option>
+            <option value="progress" ${
+              d.status === "progress" ? "selected" : ""
+            }>⏳ In Progress</option>
+            <option value="done" ${
+              d.status === "done" ? "selected" : ""
+            }>✅ Done</option>
+          </select>
+        </td>
+        <td>
+          <div class="stars" id="stars-${key.replace(/[^a-z0-9]/gi, "_")}">
+            ${[1, 2, 3, 4, 5]
+              .map(
+                (i) =>
+                  `<span class="star ${
+                    d.confidence >= i ? "lit" : ""
+                  }" onclick="setStars('${key}',${i})">★</span>`
+              )
+              .join("")}
+          </div>
+        </td>
+        <td><input type="number" min="0" max="100" value="${
+          d.mockScore || ""
+        }" placeholder="0–100" style="width:80px" onchange="updateTopic('${key}','mockScore',this.value)"></td>
+        <td><input type="text" value="${
+          d.notes || ""
+        }" placeholder="Add notes…" style="min-width:150px" onchange="updateTopic('${key}','notes',this.value)"></td>
+        <td style="text-align:center"><button class="btn btn-primary btn-sm" onclick="saveTopicRow('${key}')">💾</button></td>
+      </tr>`;
+          }
+          html += `</tbody></table></div>`;
+        }
+        container.innerHTML =
+          html ||
+          '<div class="empty-state"><div class="emo">🎉</div>No topics match this filter.</div>';
+      }
+
+      function updateTopic(key, field, value) {
+        if (!state.topics[key])
+          state.topics[key] = {
+            status: "todo",
+            confidence: 0,
+            mockScore: "",
+            notes: "",
+          };
+        state.topics[key][field] = value;
+      }
+      function setStars(key, val) {
+        updateTopic(key, "confidence", val);
+        const safeKey = key.replace(/[^a-z0-9]/gi, "_");
+        document.querySelectorAll(`#stars-${safeKey} .star`).forEach((s, i) => {
+          s.classList.toggle("lit", i < val);
+        });
+      }
+      function saveTopicRow(key) {
+        saveState();
+        updateDashTopics();
+        updateHeaderStats();
+      }
+
+      function filterTopics(f, el) {
+        document
+          .querySelectorAll(".filter-chip")
+          .forEach((c) => c.classList.remove("active"));
+        el.classList.add("active");
+        renderTopicTracker(f);
+      }
+
+      // ==================== DASHBOARD TOPIC OVERVIEW ====================
+      function updateDashTopics() {
+        const container = document.getElementById("dash-topic-overview");
+        const sectionColors = {
+          Mathematics: "var(--accent2)",
+          Reasoning: "var(--warn)",
+          "General Science & GK": "var(--accent3)",
+          "Technical (Engineering)": "#a78bfa",
+        };
+        let html = '<div class="grid-2">';
+        for (const [section, topics] of Object.entries(TOPICS)) {
+          const done = topics.filter(
+            (t) => state.topics[topicKey(section, t)]?.status === "done"
+          ).length;
+          const inprog = topics.filter(
+            (t) => state.topics[topicKey(section, t)]?.status === "progress"
+          ).length;
+          const pct = Math.round((done / topics.length) * 100);
+          html += `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:13px;font-weight:600">${section}</span>
+        <span style="font-size:12px;font-family:'DM Mono',monospace;color:${
+          sectionColors[section]
+        }">${done}/${topics.length} done</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${pct}%;background:${
+            sectionColors[section]
+          }"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">${inprog} in progress · ${
+            topics.length - done - inprog
+          } todo</div>
+    </div>`;
+        }
+        html += "</div>";
+        container.innerHTML = html;
+      }
+
+      // ==================== WEEK PLAN ====================
+      function updateWeek(n, val) {
+        state.weekProgress[n] = parseInt(val);
+        document.getElementById(`w${n}-fill`).style.width = val + "%";
+        document.getElementById(`w${n}-pct-label`).textContent = val + "%";
+        // dashboard mini bars
+        if (document.getElementById(`w${n}bar`)) {
+          document.getElementById(`w${n}bar`).style.width = val + "%";
+          document.getElementById(`w${n}done`).textContent = val + "%";
+        }
+        saveState();
+      }
+
+      function loadWeekProgress() {
+        for (let n = 1; n <= 4; n++) {
+          const v = state.weekProgress[n] || 0;
+          const slider = document.getElementById(`w${n}-slider`);
+          if (slider) slider.value = v;
+          const fill = document.getElementById(`w${n}-fill`);
+          if (fill) fill.style.width = v + "%";
+          const label = document.getElementById(`w${n}-pct-label`);
+          if (label) label.textContent = v + "%";
+          // dashboard
+          const db = document.getElementById(`w${n}bar`);
+          if (db) db.style.width = v + "%";
+          const dl = document.getElementById(`w${n}done`);
+          if (dl) dl.textContent = v + "%";
+        }
+      }
+
+      // ==================== SCHEDULE ====================
+      function renderSchedule() {
+        const colors = [
+          "var(--accent)",
+          "var(--accent2)",
+          "var(--accent3)",
+          "var(--warn)",
+          "#a78bfa",
+          "#ec4899",
+          "var(--accent)",
+        ];
+        const tbody = document.getElementById("schedule-tbody");
+        if (!tbody) return;
+        tbody.innerHTML = SCHEDULE.map((row, ri) => {
+          const isBreak =
+            row[1].includes("Break") ||
+            row[1].includes("Rest") ||
+            row[1].includes("Exercise") ||
+            row[1].includes("Relax");
+          return `<tr style="${isBreak ? "opacity:0.5" : ""}">
+      <td style="padding:10px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border)">${
+        row[0]
+      }</td>
+      ${row
+        .slice(1)
+        .map(
+          (cell, ci) =>
+            `<td style="padding:8px;text-align:center;font-size:11px;border-bottom:1px solid var(--border);line-height:1.4;color:${
+              isBreak ? "var(--muted)" : colors[ci]
+            }">${cell}</td>`
+        )
+        .join("")}
+    </tr>`;
+        }).join("");
+      }
+
+      // ==================== MOCK TESTS ====================
+      function addMock() {
+        const date = document.getElementById("mock-date").value;
+        const platform = document.getElementById("mock-platform").value;
+        const type = document.getElementById("mock-type").value;
+        const total =
+          parseInt(document.getElementById("mock-total").value) || 75;
+        const correct =
+          parseInt(document.getElementById("mock-correct").value) || 0;
+        const wrong =
+          parseInt(document.getElementById("mock-wrong").value) || 0;
+        const skipped =
+          parseInt(document.getElementById("mock-skipped").value) || 0;
+        const notes = document.getElementById("mock-notes").value;
+
+        const score = correct - wrong / 3;
+        const pct = Math.round((score / total) * 100);
+
+        state.mocks.push({
+          date,
+          platform,
+          type,
+          total,
+          correct,
+          wrong,
+          skipped,
+          score: Math.round(score * 100) / 100,
+          pct,
+          notes,
+        });
+        saveState();
+        renderMocks();
+        updateHeaderStats();
+      }
+
+      function deleteMock(i) {
+        state.mocks.splice(i, 1);
+        saveState();
+        renderMocks();
+        updateHeaderStats();
+      }
+
+      function renderMocks() {
+        const list = document.getElementById("mock-list");
+        if (!state.mocks.length) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="emo">📝</div>No mock tests logged yet.</div>';
+          renderTrend();
+          return;
+        }
+        list.innerHTML = `
+    <div style="display:grid;grid-template-columns:90px 1fr 80px 80px 80px 80px auto;gap:12px;padding:8px 16px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.5px">
+      <span>Date</span><span>Platform / Type</span><span>Score</span><span>Correct</span><span>Wrong</span><span>Skip</span><span></span>
+    </div>
+    ${state.mocks
+      .map((m, i) => {
+        const col =
+          m.pct >= 70
+            ? "var(--accent3)"
+            : m.pct >= 50
+            ? "var(--warn)"
+            : "var(--danger)";
+        return `<div class="mock-list-item">
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">${
+          m.date || "—"
+        }</span>
+        <div>
+          <div style="font-weight:600;font-size:13px">${m.platform}</div>
+          <div style="font-size:11px;color:var(--muted)">${m.type}</div>
+          ${
+            m.notes
+              ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">📝 ${m.notes}</div>`
+              : ""
+          }
+        </div>
+        <div><span class="mock-score-chip" style="color:${col}">${
+          m.score
+        }</span><div style="font-size:10px;color:var(--muted)">${
+          m.pct
+        }%</div></div>
+        <span style="color:var(--accent3)">${m.correct} ✅</span>
+        <span style="color:var(--danger)">${m.wrong} ❌</span>
+        <span style="color:var(--muted)">${m.skipped} ⚠</span>
+        <button class="btn btn-danger btn-sm" onclick="deleteMock(${i})">✕</button>
+      </div>`;
+      })
+      .join("")}
+  `;
+        renderTrend();
+      }
+
+      function renderTrend() {
+        const canvas = document.getElementById("trendChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const w = canvas.parentElement.clientWidth || 600;
+        canvas.width = w;
+        canvas.height = 160;
+        ctx.clearRect(0, 0, w, 160);
+
+        if (state.mocks.length < 1) {
+          ctx.fillStyle = "#64748b";
+          ctx.font = "14px DM Sans";
+          ctx.textAlign = "center";
+          ctx.fillText("Add mock tests to see trend", w / 2, 80);
+          return;
+        }
+
+        const scores = state.mocks.map((m) => m.score);
+        const totals = state.mocks.map((m) => m.total);
+        const labels = state.mocks.map((m, i) => `Mock ${i + 1}`);
+        const maxTotal = Math.max(...totals, 75);
+        const pad = { l: 40, r: 20, t: 20, b: 30 };
+        const gw = w - pad.l - pad.r;
+        const gh = 160 - pad.t - pad.b;
+
+        // Grid
+        ctx.strokeStyle = "#243050";
+        ctx.lineWidth = 1;
+        [0, 25, 50, 75, 100].forEach((v) => {
+          const y = pad.t + gh - (v / maxTotal) * gh;
+          ctx.beginPath();
+          ctx.moveTo(pad.l, y);
+          ctx.lineTo(pad.l + gw, y);
+          ctx.stroke();
+          ctx.fillStyle = "#64748b";
+          ctx.font = "10px DM Mono";
+          ctx.textAlign = "right";
+          ctx.fillText(v, pad.l - 6, y + 4);
+        });
+
+        // Target line
+        const ty = pad.t + gh - (55 / maxTotal) * gh;
+        ctx.strokeStyle = "rgba(16,185,129,0.5)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, ty);
+        ctx.lineTo(pad.l + gw, ty);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "var(--accent3)";
+        ctx.font = "10px DM Mono";
+        ctx.textAlign = "left";
+        ctx.fillText("Target 55", pad.l + 4, ty - 4);
+
+        if (scores.length === 1) {
+          const x = pad.l + gw / 2;
+          const y = pad.t + gh - (scores[0] / maxTotal) * gh;
+          ctx.fillStyle = "#f97316";
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, Math.PI * 2);
+          ctx.fill();
+          return;
+        }
+
+        // Line
+        const step = gw / (scores.length - 1);
+        ctx.strokeStyle = "#f97316";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        scores.forEach((s, i) => {
+          const x = pad.l + i * step;
+          const y = pad.t + gh - (s / maxTotal) * gh;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Fill area
+        const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gh);
+        grad.addColorStop(0, "rgba(249,115,22,0.3)");
+        grad.addColorStop(1, "rgba(249,115,22,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        scores.forEach((s, i) => {
+          const x = pad.l + i * step;
+          const y = pad.t + gh - (s / maxTotal) * gh;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.lineTo(pad.l + (scores.length - 1) * step, pad.t + gh);
+        ctx.lineTo(pad.l, pad.t + gh);
+        ctx.closePath();
+        ctx.fill();
+
+        // Dots + labels
+        scores.forEach((s, i) => {
+          const x = pad.l + i * step;
+          const y = pad.t + gh - (s / maxTotal) * gh;
+          ctx.fillStyle = "#f97316";
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#e2e8f0";
+          ctx.font = "11px Syne";
+          ctx.textAlign = "center";
+          ctx.fillText(s.toFixed(1), x, y - 10);
+          ctx.fillStyle = "#64748b";
+          ctx.font = "10px DM Mono";
+          ctx.fillText(labels[i], x, pad.t + gh + 18);
+        });
+      }
+
+      // ==================== Q ANALYSIS ====================
+      function renderQuestions(filter = "all") {
+        const container = document.getElementById("q-list");
+        const filtered = QUESTIONS.filter(
+          (q) => filter === "all" || q.result === filter
+        );
+        if (!filtered.length) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="emo">🔍</div>No questions match.</div>';
+          return;
+        }
+
+        const icons = { correct: "✅", wrong: "❌", skipped: "⚠️" };
+        const diffClass = {
+          Easy: "diff-easy",
+          Medium: "diff-med",
+          Hard: "diff-hard",
+        };
+        const subColors = {
+          Mathematics: "#60a5fa",
+          Reasoning: "#fcd34d",
+          "General Science & GK": "#34d399",
+        };
+
+        container.innerHTML = filtered
+          .map(
+            (q) => `
+    <div class="qrow">
+      <div class="q-num">Q${q.q}</div>
+      <div class="q-result">${icons[q.result]}</div>
+      <div class="q-body">
+        <div class="q-topic">${q.topic}</div>
+        <div class="q-subject" style="color:${
+          subColors[q.sub] || "var(--muted)"
+        }">${q.sub}</div>
+        <div class="q-concept">${q.concept}</div>
+      </div>
+      <div class="q-diff ${diffClass[q.diff]}">${q.diff}</div>
+    </div>
+  `
+          )
+          .join("");
+      }
+
+      function filterQ(f, el) {
+        document
+          .querySelectorAll("#page-analysis .filter-chip")
+          .forEach((c) => c.classList.remove("active"));
+        el.classList.add("active");
+        renderQuestions(f);
+      }
+
+      // ==================== EXPORT ====================
+      function exportProgress() {
+        const rows = ["Section,Topic,Status,Confidence,MockScore,Notes"];
+        for (const [section, topics] of Object.entries(TOPICS)) {
+          for (const t of topics) {
+            const d = state.topics[topicKey(section, t)] || {
+              status: "todo",
+              confidence: 0,
+              mockScore: "",
+              notes: "",
+            };
+            rows.push(
+              [section, t, d.status, d.confidence, d.mockScore, d.notes]
+                .map((v) => `"${v}"`)
+                .join(",")
+            );
+          }
+        }
+        const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "RRB_ALP_Progress.csv";
+        a.click();
+      }
+
+      // ==================== INIT ====================
+      function init() {
+        loadState();
+        renderTopicTracker();
+        renderSchedule();
+        renderMocks();
+        renderQuestions();
+        updateDashTopics();
+        updateHeaderStats();
+        loadWeekProgress();
+        // Set today's date for mock form
+        document.getElementById("mock-date").value = new Date()
+          .toISOString()
+          .split("T")[0];
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+      window.addEventListener("resize", () => {
+        if (document.getElementById("page-mocks").classList.contains("active"))
+          renderTrend();
+      });
+    </script>
+  </body>
+</html>
